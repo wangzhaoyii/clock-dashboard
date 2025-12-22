@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/teojs/clock-dashboard/compare/v1.4.0...v1.5.0) (2025-12-22)
+
+
+### Features
+
+* **weather:** update weather component layout and styling, adding precipitation probability and apparent temperature display for enhanced user experience ([edde92b](https://github.com/teojs/clock-dashboard/commit/edde92b2e97ef8febb6474c2795a4adc2f939990))
+
 ## [1.4.0](https://github.com/teojs/clock-dashboard/compare/v1.3.0...v1.4.0) (2025-12-22)
 
 
