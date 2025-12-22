@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/teojs/clock-dashboard/compare/v1.0.5...v1.1.0) (2025-12-22)
+
+
+### Features
+
+* **SmartHome:** add climate information display and enhance settings modal with entity states ([c39f974](https://github.com/teojs/clock-dashboard/commit/c39f9746500d987fdd7745972c99e95edebc3317))
+
 ### [1.0.5](https://github.com/teojs/clock-dashboard/compare/v1.0.4...v1.0.5) (2025-12-22)
 
 ### [1.0.4](https://github.com/teojs/clock-dashboard/compare/v1.0.3...v1.0.4) (2025-12-22)
