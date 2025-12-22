@@ -145,10 +145,10 @@ defineExpose({ updateAllStates, entitiesStates });
           class="p-4 bg-white/10 hover:bg-white/20 border border-white/10 rounded-full transition-all"
           :class="{ 'opacity-50 pointer-events-none': isRefreshing }"
         >
-          <RotateCw class="w-8 h-8" :class="{ 'animate-spin': isRefreshing }" />
+          <RotateCw class="w-6 h-6" :class="{ 'animate-spin': isRefreshing }" />
         </button>
         <button @click="emit('open-settings')" class="p-4 bg-white/10 hover:bg-white/20 border border-white/10 rounded-full transition-all">
-          <Settings class="w-8 h-8" />
+          <Settings class="w-6 h-6" />
         </button>
       </div>
     </div>

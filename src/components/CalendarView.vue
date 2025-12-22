@@ -80,19 +80,18 @@ defineExpose({ refreshToday });
         <h2 class="text-4xl md:text-5xl font-bold tracking-widest">{{ year }}年{{ month + 1 }}月</h2>
         <p class="text-lg opacity-50 tracking-[0.4em] uppercase mt-1">{{ monthNames[month] }}</p>
       </div>
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-3">
+        <button @click="changeMonth(-1)" class="p-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded-full transition-all duration-300">
+          <ChevronLeft class="w-6 h-6 " />
+        </button>
         <button 
           @click="goToToday" 
-          class="p-4 bg-white/10 hover:bg-white/20 border border-white/10 rounded-full transition-all duration-500"
-          :class="{ 'opacity-0 pointer-events-none': isCurrentMonth, 'opacity-100': !isCurrentMonth }"
+          class="px-6 py-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded-full transition-all duration-300 text-md font-medium"
         >
-          <RotateCcw class="w-8 h-8 md:w-10 md:h-10" />
+          今天
         </button>
-        <button @click="changeMonth(-1)" class="p-4 bg-white/10 hover:bg-white/20 border border-white/10 rounded-full transition-all duration-300">
-          <ChevronLeft class="w-8 h-8 md:w-10 md:h-10" />
-        </button>
-        <button @click="changeMonth(1)" class="p-4 bg-white/10 hover:bg-white/20 border border-white/10 rounded-full transition-all duration-300">
-          <ChevronRight class="w-8 h-8 md:w-10 md:h-10" />
+        <button @click="changeMonth(1)" class="p-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded-full transition-all duration-300">
+          <ChevronRight class="w-6 h-6 " />
         </button>
       </div>
     </div>
@@ -110,7 +109,7 @@ defineExpose({ refreshToday });
           class="calendar-day"
           :class="{ 'other-month': day.isOtherMonth, 'today': day.isToday }"
         >
-          <div class="day-number-wrapper flex flex-col items-center justify-center transition-all duration-300">
+          <div class="day-number-wrapper flex flex-col items-center justify-center">
             <span class="text-2xl md:text-3xl font-bold">{{ day.date.getDate() }}</span>
             <span class="lunar-text text-sm opacity-60 font-light mt-1">{{ day.lunar.date }}</span>
           </div>
