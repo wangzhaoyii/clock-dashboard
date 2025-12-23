@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/teojs/clock-dashboard/compare/v1.5.1...v1.6.0) (2025-12-23)
+
+
+### Features
+
+* **settings:** add cross-origin loading tips in SettingsModal for improved user guidance ([99066a8](https://github.com/teojs/clock-dashboard/commit/99066a83dcf75ea12087d171339a34df4a1b203e))
+
+
+### Bug Fixes
+
+* **weather:** adjust layout and replace thermometer icon with person standing icon for improved visual consistency ([c3b7328](https://github.com/teojs/clock-dashboard/commit/c3b7328905ef048408950794e6959ddb5c181b24))
+
 ### [1.5.1](https://github.com/teojs/clock-dashboard/compare/v1.5.0...v1.5.1) (2025-12-22)
 
 ## [1.5.0](https://github.com/teojs/clock-dashboard/compare/v1.4.0...v1.5.0) (2025-12-22)
