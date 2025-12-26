@@ -4,6 +4,7 @@ import CalendarView from './components/CalendarView.vue'
 import ClockWeather from './components/ClockWeather.vue'
 import SettingsModal from './components/SettingsModal.vue'
 import SmartHome from './components/SmartHome.vue'
+import WeatherEffects from './components/WeatherEffects.vue'
 
 const currentPage = ref(1)
 const showSettings = ref(false)
@@ -99,11 +100,6 @@ onUnmounted(() => {
     @mousedown="handleMouseDown"
     @mouseup="handleMouseUp"
   >
-    <!-- Background Decoration -->
-    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-900/10 rounded-full blur-3xl" />
-    <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-900/10 rounded-full blur-3xl" />
-
-    <!-- Main Slider -->
     <div
       class="main-slider flex h-full transition-transform duration-700 cubic-bezier"
       :style="{ transform: `translateX(-${currentPage * 100}vw)`, width: '300vw' }"
@@ -118,6 +114,8 @@ onUnmounted(() => {
         <CalendarView ref="calendarRef" />
       </div>
     </div>
+
+    <WeatherEffects />
 
     <!-- Navigation Dots -->
     <!-- <div class="nav-dots absolute bottom-10 left-0 right-0 flex justify-center gap-3 z-50">

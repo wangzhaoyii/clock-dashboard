@@ -1,0 +1,283 @@
+<script setup lang="ts">
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { useWeather } from '../composables/useWeather'
+
+const { weatherData } = useWeather()
+
+// WMO codes:
+// Rain: 51-55 (drizzle), 61-67 (rain), 80-82 (showers), 95-99 (thunderstorm)
+// Thunder: 95, 96, 99
+
+const weatherCode = computed(() => weatherData.value?.current?.weather_code ?? -1)
+
+const isRaining = computed(() => {
+  const code = weatherCode.value
+  return (code >= 51 && code <= 67) || (code >= 80 && code <= 82) || (code >= 95 && code <= 99)
+})
+
+const isThundering = computed(() => {
+  const code = weatherCode.value
+  return code === 95 || code === 96 || code === 99
+})
+
+// Rain density based on code
+const rainCount = computed(() => {
+  const code = weatherCode.value
+  if (code === 65 || code === 82 || code === 99) return 150 // Heavy
+  if (code === 63 || code === 81 || code === 96) return 100 // Moderate
+  if (code >= 51 && code <= 55) return 40 // Drizzle
+  return 80 // Default rain
+})
+
+const showFlash = ref(false)
+const showBolt = ref(false)
+// 存储当前雷电的坐标点
+let currentBoltPoints: { x: number, y: number }[][] = []
+
+const canvasRef = ref<HTMLCanvasElement | null>(null)
+let animationId: number | null = null
+let flashTimer: number | null = null
+
+// Rain state
+interface Drop {
+  x: number
+  y: number
+  l: number
+  v: number
+}
+let drops: Drop[] = []
+
+function initCanvas() {
+  if (!canvasRef.value) return
+  const canvas = canvasRef.value
+  canvas.width = window.innerWidth
+  canvas.height = window.innerHeight
+
+  // 根据雨量动态计算速度基准
+  // rainCount 越大（雨越重），速度越快
+  const count = rainCount.value
+  const baseSpeed = count <= 40 ? 5 : count <= 100 ? 7 : 10
+
+  // Initialize drops
+  drops = []
+  for (let i = 0; i < count; i++) {
+    drops.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      l: 20 + Math.random() * 15,
+      v: baseSpeed + Math.random() * baseSpeed, // 速度范围在 [base, base*2] 之间
+    })
+  }
+}
+
+function generateLightningPoints() {
+  const width = 100 + Math.random() * 200
+  const height = canvasRef.value ? canvasRef.value.height * 0.6 : 400
+  const startX = Math.random() * (window.innerWidth - width)
+  const startY = Math.random() * 50
+
+  const mainPath: { x: number, y: number }[] = []
+  let currX = startX + width / 2
+  let currY = startY
+  const segments = 5 + Math.floor(Math.random() * 5)
+  const segmentHeight = height / segments
+
+  mainPath.push({ x: currX, y: currY })
+
+  const newBoltPoints: { x: number, y: number }[][] = []
+
+  for (let i = 1; i <= segments; i++) {
+    currX += (Math.random() - 0.5) * 60
+    currY += segmentHeight
+    mainPath.push({ x: currX, y: currY })
+
+    // Add a branch occasionally
+    if (Math.random() > 0.7 && i < segments) {
+      const branchPath: { x: number, y: number }[] = []
+      branchPath.push({ x: currX, y: currY })
+      const bX = currX + (Math.random() - 0.5) * 80
+      const bY = currY + segmentHeight * 0.5
+      branchPath.push({ x: bX, y: bY })
+      newBoltPoints.push(branchPath)
+    }
+  }
+
+  newBoltPoints.push(mainPath)
+  currentBoltPoints = newBoltPoints
+}
+
+function drawLightning(ctx: CanvasRenderingContext2D) {
+  if (!showBolt.value || currentBoltPoints.length === 0) return
+
+  ctx.save()
+
+  // 模拟发光：核心外围
+  ctx.shadowBlur = 15
+  ctx.shadowColor = 'rgba(255, 255, 255, 1)'
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'
+  ctx.lineWidth = 4
+  ctx.lineCap = 'round'
+  ctx.lineJoin = 'round'
+
+  currentBoltPoints.forEach((path) => {
+    ctx.beginPath()
+    ctx.moveTo(path[0].x, path[0].y)
+    for (let i = 1; i < path.length; i++) {
+      ctx.lineTo(path[i].x, path[i].y)
+    }
+    ctx.stroke()
+  })
+
+  // 纯白色核心
+  ctx.shadowBlur = 0
+  ctx.strokeStyle = '#ffffff'
+  ctx.lineWidth = 2
+  currentBoltPoints.forEach((path) => {
+    ctx.beginPath()
+    ctx.moveTo(path[0].x, path[0].y)
+    for (let i = 1; i < path.length; i++) {
+      ctx.lineTo(path[i].x, path[i].y)
+    }
+    ctx.stroke()
+  })
+
+  ctx.restore()
+}
+
+function render() {
+  if (!canvasRef.value) return
+  const canvas = canvasRef.value
+  const ctx = canvas.getContext('2d')
+  if (!ctx) return
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+  // 1. 绘制雷电 (先画雷电，这样雨滴可以在雷电上层，层次感更好)
+  if (isThundering.value && showBolt.value) {
+    drawLightning(ctx)
+  }
+
+  // 2. 绘制雨滴
+  if (isRaining.value) {
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)'
+    ctx.lineWidth = 1.5
+    ctx.lineCap = 'round'
+
+    for (let i = 0; i < drops.length; i++) {
+      const d = drops[i]
+      ctx.beginPath()
+      ctx.moveTo(d.x, d.y)
+      // 保持倾斜角度与速度比例一致 (水平偏移设为速度的 15%)
+      const drift = d.v * 0.15
+      ctx.lineTo(d.x + drift * 2, d.y + d.l)
+      ctx.stroke()
+
+      d.y += d.v
+      d.x += drift
+
+      if (d.y > canvas.height) {
+        d.y = -d.l
+        d.x = Math.random() * canvas.width
+      }
+    }
+  }
+
+  animationId = requestAnimationFrame(render)
+}
+
+watch([isRaining, rainCount], ([raining]) => {
+  if (raining) {
+    initCanvas()
+  }
+})
+
+function triggerFlash() {
+  if (!isThundering.value) return
+
+  // Generate bolt
+  generateLightningPoints()
+  showBolt.value = true
+  showFlash.value = true
+
+  // Multiple flickers for the flash and bolt
+  setTimeout(() => {
+    showFlash.value = false
+    showBolt.value = false
+  }, 50)
+  setTimeout(() => {
+    showFlash.value = true
+    showBolt.value = true
+  }, 100)
+  setTimeout(() => {
+    showFlash.value = false
+    showBolt.value = false
+  }, 150)
+  setTimeout(() => {
+    showFlash.value = true
+    showBolt.value = true
+  }, 200)
+  setTimeout(() => {
+    showFlash.value = false
+    showBolt.value = false
+  }, 400)
+
+  // Random next flash
+  const nextFlash = 3000 + Math.random() * 7000
+  flashTimer = window.setTimeout(triggerFlash, nextFlash)
+}
+
+watch(isThundering, (newVal) => {
+  if (newVal) {
+    triggerFlash()
+  }
+  else if (flashTimer) {
+    clearTimeout(flashTimer)
+    flashTimer = null
+    showFlash.value = false
+  }
+}, { immediate: true })
+
+onMounted(() => {
+  initCanvas()
+  render()
+  window.addEventListener('resize', initCanvas)
+})
+
+onUnmounted(() => {
+  if (flashTimer) clearTimeout(flashTimer)
+  if (animationId) cancelAnimationFrame(animationId)
+  window.removeEventListener('resize', initCanvas)
+})
+</script>
+
+<template>
+  <div class="weather-effects-container pointer-events-none fixed inset-0 z-0 overflow-hidden">
+    <!-- Thunder Flash -->
+    <div
+      v-if="isThundering"
+      class="flash-overlay absolute inset-0 bg-white opacity-0 transition-opacity duration-75"
+      :class="{ 'opacity-10': showFlash }"
+    />
+
+    <!-- Lightning Bolt -->
+    <!-- Moved to Canvas -->
+
+    <!-- Rain Canvas -->
+    <canvas
+      ref="canvasRef"
+      class="absolute inset-0 w-full h-full"
+    />
+  </div>
+</template>
+
+<style scoped>
+.weather-effects-container {
+  z-index: 50;
+  will-change: transform;
+}
+
+.flash-overlay {
+  z-index: 10;
+  will-change: opacity;
+}
+</style>
