@@ -14,6 +14,10 @@
 
 ## 更新日志
 
+- 2025-12-29 （[v1.11.0](https://github.com/teojs/clock-dashboard/releases/tag/v1.11.0)）
+  - 优化天气城市填写功能；
+  - 新增 Docker 部署支持；
+
 - 2025-12-26 （[v1.10.0](https://github.com/teojs/clock-dashboard/releases/tag/v1.10.0)）
   - 新增天气设置弹窗，支持设置天气刷新间隔、下雨、下雪、打雷特效开关。
 
