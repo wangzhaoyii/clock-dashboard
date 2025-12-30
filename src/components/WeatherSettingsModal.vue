@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { CitySearchResult, LocationMode } from '../stores/weather'
+import type { CitySearchResult } from '../api/types'
+import type { LocationMode } from '../stores/weather'
 import { RefreshCw, Save, X } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
 import { ref, watch } from 'vue'

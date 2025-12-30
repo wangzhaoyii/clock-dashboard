@@ -69,7 +69,7 @@ export const useWeatherStore = defineStore('weather', () => {
       if (results.length > 0) {
         return results.map((r) => {
           const rawName = r.name || ''
-          const rawDisplayName = r.name || ''
+          const rawDisplayName = r.display_name || ''
           const cityName = extractSimplifiedChinese(rawName.split(',')[0] || rawName)
           const displayName = cleanDisplayName(rawDisplayName)
 
@@ -98,7 +98,7 @@ export const useWeatherStore = defineStore('weather', () => {
       const results = await searchCities(trimmedCity)
       if (results.length > 0) {
         const result = results[0]
-        locationText.value = result.displayName || result.name
+        locationText.value = result.name
         await fetchWeather(result.latitude, result.longitude)
       }
       else {
