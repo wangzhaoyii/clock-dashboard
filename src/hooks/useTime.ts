@@ -11,6 +11,7 @@ export function useTime() {
   const s1 = ref(0)
   const s2 = ref(0)
   const lunar = ref<LunarInfo>(getLunarDate(new Date()))
+  const lastUpdateDate = ref(new Date().toDateString())
   const showSeconds = ref(false)
 
   let timer: number
@@ -30,9 +31,11 @@ export function useTime() {
     s1.value = Number.parseInt(s[0])
     s2.value = Number.parseInt(s[1])
 
-    // Update lunar once a day or on init
-    if (d.getHours() === 0 && d.getMinutes() === 0 && d.getSeconds() === 0) {
+    // Update lunar if date has changed
+    const currentDateStr = d.toDateString()
+    if (currentDateStr !== lastUpdateDate.value) {
       lunar.value = getLunarDate(d)
+      lastUpdateDate.value = currentDateStr
     }
   }
 
