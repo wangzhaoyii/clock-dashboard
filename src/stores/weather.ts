@@ -144,7 +144,7 @@ export const useWeatherStore = defineStore('weather', () => {
     try {
       const coords = await getCurrentPosition(5000)
       const locationData = await reverseGeocodeApi(coords.latitude, coords.longitude)
-      const cityName = locationData.city || locationData.locality || locationData.principalSubdivision || '未知城市'
+      const cityName = locationData.locality || locationData.city || locationData.principalSubdivision || '未知城市'
       locationText.value = cityName
       cachedCoords.value = {
         lat: coords.latitude,
