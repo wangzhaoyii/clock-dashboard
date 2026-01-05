@@ -137,8 +137,8 @@ defineExpose({ refreshToday })
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   grid-template-rows: repeat(6, 1fr);
-  grid-gap: 1px; /* iOS 12.1+ Fallback */
-  gap: 1px;
+  grid-gap: 4px; /* iOS 12.1+ Fallback */
+  gap: 4px;
   flex: 1;
   overflow: hidden;
 }
@@ -151,17 +151,14 @@ defineExpose({ refreshToday })
   transition: all 0.2s;
   position: relative;
   min-height: 0;
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0);
+  border-radius: 12px;
 }
 
-.calendar-day.today .day-number-wrapper {
-  border-radius: 50%;
-  width: 80px;
-  height: 80px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba(255, 255, 255, 1);
+.calendar-day.today {
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.09);
 }
 
 .calendar-day.other-month {
