@@ -2,7 +2,7 @@ import type { LunarInfo } from '../types'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { getLunarDate } from '../utils/lunar'
 
-export function useTime() {
+export function useTime(options: { is24Hour?: boolean | { value: boolean } } = {}) {
   const now = ref(new Date())
   const h1 = ref(0)
   const h2 = ref(0)
@@ -19,7 +19,13 @@ export function useTime() {
     const d = new Date()
     now.value = d
 
-    const h = String(d.getHours()).padStart(2, '0')
+    let hours = d.getHours()
+    const is24 = typeof options.is24Hour === 'object' ? options.is24Hour.value : options.is24Hour
+    if (is24 === false) {
+      hours = hours % 12 || 12
+    }
+
+    const h = String(hours).padStart(2, '0')
     const m = String(d.getMinutes()).padStart(2, '0')
     const s = String(d.getSeconds()).padStart(2, '0')
 

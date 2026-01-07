@@ -7,10 +7,12 @@ import Weather from '../components/Weather.vue'
 import { useTime } from '../hooks/useTime'
 import { useConfigStore } from '../stores/config'
 
-const { h1, h2, m1, m2, s1, s2, lunar, now } = useTime()
-
 const configStore = useConfigStore()
 const { clockConfig } = storeToRefs(configStore)
+
+const { h1, h2, m1, m2, s1, s2, lunar, now } = useTime({
+  is24Hour: computed(() => clockConfig.value.is24Hour),
+})
 
 const showClockSettings = ref(false)
 
@@ -51,6 +53,7 @@ const baseDelay = computed(() => {
       @click="showClockSettings = true"
     >
       <Digit
+        v-if="clockConfig.is24Hour || h1 !== 0"
         :value="h1" :show-seconds="clockConfig.showSeconds" :enable-tilt="clockConfig.enableTilt"
         :trigger="clockConfig.showSeconds ? now.getTime() : Math.floor(now.getTime() / 60000)"
         :delay="(5 - baseDelay) * 100"
@@ -60,7 +63,10 @@ const baseDelay = computed(() => {
         :value="h2" :show-seconds="clockConfig.showSeconds" :enable-tilt="clockConfig.enableTilt"
         :trigger="clockConfig.showSeconds ? now.getTime() : Math.floor(now.getTime() / 60000)"
         :delay="(4 - baseDelay) * 100"
-        class="opacity-95 brightness"
+        class="opacity-95"
+        :class="[{
+          brightness: clockConfig.is24Hour || (!clockConfig.is24Hour && h1 !== 0),
+        }]"
       />
 
       <div class="clock-separator">

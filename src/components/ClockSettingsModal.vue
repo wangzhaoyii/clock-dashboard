@@ -37,6 +37,7 @@ function handleRestoreDefault() {
     enableTilt: true,
     showSeconds: false,
     opacity: 0.9,
+    is24Hour: true,
   }
 }
 
@@ -162,6 +163,22 @@ function handleSaveAndClose() {
                 <div
                   class="absolute top-1 left-1 w-4 h-4 rounded-full transition-transform"
                   :class="draft.showSeconds ? 'translate-x-6 bg-black' : 'bg-white/50'"
+                />
+              </div>
+            </div>
+
+            <div
+              class="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/10 cursor-pointer hover:bg-white/10 transition-all"
+              @click="draft.is24Hour = !draft.is24Hour"
+            >
+              <span class="font-medium">24 小时制</span>
+              <div
+                class="w-12 h-6 rounded-full transition-colors relative"
+                :class="draft.is24Hour ? 'bg-white' : 'bg-white/10'"
+              >
+                <div
+                  class="absolute top-1 left-1 w-4 h-4 rounded-full transition-transform"
+                  :class="draft.is24Hour ? 'translate-x-6 bg-black' : 'bg-white/50'"
                 />
               </div>
             </div>
